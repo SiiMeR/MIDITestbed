@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MidiJack;
+using TMPro;
 using UnityEngine;
 
 
@@ -95,8 +97,11 @@ public enum KeyMapping
     B7 = 107,
     C7 = 108
 }
+
 public class Movement : MonoBehaviour
 {
+
+    public TextMeshProUGUI NextText;
     public Vector3 jump;
     public float jumpForce = 2.0f;
     public float moveSpeed = 10.0f;
@@ -105,8 +110,17 @@ public class Movement : MonoBehaviour
 
     public List<KeyMapping> moveSequence;
     public int currentKey = 0;
+
     void Start()
     {
+        BassWalkFromKeys(KeyMapping.E1, KeyMapping.G1, KeyMapping.B2, KeyMapping.ASharp2,
+                        KeyMapping.A2, KeyMapping.CSharp2, KeyMapping.E2,KeyMapping.A2,
+                        KeyMapping.D1, KeyMapping.FSharp1, KeyMapping.A2,KeyMapping.GSharp1,
+                        KeyMapping.G1,KeyMapping.B2, KeyMapping.D2, KeyMapping.G1,
+                        KeyMapping.CSharp1,KeyMapping.E1, KeyMapping.G1,KeyMapping.ASharp2,
+                        KeyMapping.FSharp1, KeyMapping.ASharp2, KeyMapping.CSharp2, KeyMapping.FSharp1,
+                        KeyMapping.B1, KeyMapping.D1, KeyMapping.FSharp1, KeyMapping.A2,
+                        KeyMapping.B1, KeyMapping.D1,KeyMapping.FSharp1, KeyMapping.DSharp1);
         _rigidbody2D = GetComponent<Rigidbody2D>();
         jump = new Vector3(0.0f, 2.0f, 0.0f);
     }
@@ -116,21 +130,29 @@ public class Movement : MonoBehaviour
         isGrounded = true;
     }
 
-    void Update()
+    private void BassWalkFromKeys(params KeyMapping[] keys)
+    {
+        moveSequence = keys.ToList();
+    }
+
+void Update()
     {
         
         var nextIdx =  Wrap(currentKey + 1, moveSequence.Count);
         var lastIdx = Wrap(currentKey - 1, moveSequence.Count);
 
+        
         print(nextIdx +  " " + lastIdx);
         var nextKey = moveSequence[nextIdx];
         var prevKey = moveSequence[lastIdx];
+
+        NextText.text = nextKey.ToString();
         
         if (GetKeyDown(nextKey))
         {
             _rigidbody2D.AddForce(Vector3.right * moveSpeed  * Time.deltaTime, ForceMode2D.Impulse);
             currentKey++;
-
+            return;
         }
         
         if (GetKeyDown(prevKey))

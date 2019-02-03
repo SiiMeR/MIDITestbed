@@ -141,12 +141,26 @@ void Update()
         var nextIdx =  Wrap(currentKey + 1, moveSequence.Count);
         var lastIdx = Wrap(currentKey - 1, moveSequence.Count);
 
-        
-        print(nextIdx +  " " + lastIdx);
         var nextKey = moveSequence[nextIdx];
         var prevKey = moveSequence[lastIdx];
 
-        NextText.text = nextKey.ToString();
+        var displayString = "";
+        moveSequence.ForEach(key =>
+        {
+            if (key == moveSequence[nextIdx])
+            {
+                displayString += "<color=red>" + key.ToString() + "</color> ";
+            }
+            else
+            {
+                displayString += key.ToString() + " ";
+            }
+            
+        });
+
+        displayString = displayString.Replace("Sharp", "#");
+        
+        NextText.text = displayString;
         
         if (GetKeyDown(nextKey))
         {
